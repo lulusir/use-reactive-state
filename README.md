@@ -1,54 +1,157 @@
 # use-reactive-states
 
 ```typescript
-import React from 'react';
-import { createReactiveState, useReactiveState } from 'use-reactive-state';
+// eslint-disable-next-line max-classes-per-file
+import {
+  createReactiveState,
+  useReactiveState,
+} from '@lujs/use-reactive-state';
+import React, { useRef, useEffect } from 'react';
 
-class Vm {
-  name = 'use-react-state';
+class Todo {
+  content = '';
 
-  setName(name: string) {
-    this.name = name;
+  id = '';
+
+  status: 'done' | 'default' | 'delete' = 'default';
+
+  constructor(content: string) {
+    this.content = content;
+    this.id = Math.random().toString();
+  }
+
+  finish() {
+    if (this.status === 'default') {
+      this.status = 'done';
+    } else if (this.status === 'done') {
+      this.status = 'delete';
+    }
+  }
+
+  setContent(s: string) {
+    this.content = s;
   }
 }
 
-const vm = createReactiveState(new Vm());
+class TodoList {
+  list: Todo[] = [];
 
-const ComA = () => {
-  const state = useReactiveState(vm);
-  return (
-    <div>
-      <p>name1:{state.name}</p>
-    </div>
-  );
-};
+  addTodo(content: string) {
+    const todo = new Todo(content);
+    this.list.push(todo);
+  }
 
-const ComB = () => {
-  const state = useReactiveState(vm);
-  return (
-    <div>
-      <p>name2:{state.name}</p>
-    </div>
-  );
-};
+  init() {
+    this.addTodo('todo 1');
+  }
+
+  finish(id: string) {
+    this.list.forEach(v => {
+      if (v.id === id) {
+        v.finish();
+      }
+    });
+  }
+
+  defaultList() {
+    return this.list.filter(v => v.status === 'default');
+  }
+
+  doneList() {
+    return this.list.filter(v => v.status === 'done');
+  }
+
+  deleteList() {
+    return this.list.filter(v => v.status === 'delete');
+  }
+}
+
+const todoList = createReactiveState(new TodoList());
 
 const Index = () => {
-  const state = useReactiveState(vm);
+  const refInput = useRef<HTMLInputElement>(null);
+  const state = useReactiveState<TodoList>(todoList);
+
+  const defaultList = state.defaultList();
+  const doneList = state.doneList();
+  const deleteList = state.deleteList();
+
+  useEffect(() => {
+    state.init();
+  }, []);
 
   return (
     <div>
-      <ComA />
-      <ComB />
-      <p>name:{state.name}</p>
-      <button
-        type="button"
-        onClick={() => {
-          const n = Math.random().toString();
-          vm.setName(n);
-        }}
-      >
-        set name
-      </button>
+      <div style={{ paddingLeft: '40px', marginBottom: '20px' }}>
+        <input type="text" ref={refInput} />
+        <button
+          style={{ marginLeft: '20px' }}
+          type="button"
+          onClick={() => {
+            if (refInput.current) {
+              const content = refInput.current.value;
+              if (content) {
+                state.addTodo(content);
+              }
+            }
+          }}
+        >
+          add todo
+        </button>
+      </div>
+
+      <ul>
+        default List:
+        {defaultList.map(v => {
+          return (
+            <li key={v.id}>
+              {v.content} status: {v.status}
+              <button
+                style={{ marginLeft: '20px' }}
+                type="button"
+                onClick={() => {
+                  state.finish(v.id);
+                }}
+              >
+                finish
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      <ul>
+        done List:
+        {doneList.map(v => {
+          return (
+            <li key={v.id}>
+              {v.content} status: {v.status}
+              <button
+                style={{ marginLeft: '20px' }}
+                type="button"
+                onClick={() => {
+                  state.finish(v.id);
+                }}
+              >
+                finish
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      <ul>
+        delete List:
+        {deleteList.map(v => {
+          return (
+            <li key={v.id}>
+              <del>
+                {v.content} status: {v.status}
+              </del>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };

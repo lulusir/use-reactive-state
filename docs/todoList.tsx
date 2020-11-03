@@ -3,7 +3,7 @@ import {
   createReactiveState,
   useReactiveState,
 } from '@lujs/use-reactive-state';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 class Todo {
   content = '';
@@ -64,7 +64,6 @@ class TodoList {
 }
 
 const todoList = createReactiveState(new TodoList());
-todoList.init();
 
 const Index = () => {
   const refInput = useRef<HTMLInputElement>(null);
@@ -73,6 +72,10 @@ const Index = () => {
   const defaultList = state.defaultList();
   const doneList = state.doneList();
   const deleteList = state.deleteList();
+
+  useEffect(() => {
+    state.init();
+  }, []);
 
   return (
     <div>
@@ -85,7 +88,7 @@ const Index = () => {
             if (refInput.current) {
               const content = refInput.current.value;
               if (content) {
-                todoList.addTodo(content);
+                state.addTodo(content);
               }
             }
           }}
@@ -104,7 +107,7 @@ const Index = () => {
                 style={{ marginLeft: '20px' }}
                 type="button"
                 onClick={() => {
-                  todoList.finish(v.id);
+                  state.finish(v.id);
                 }}
               >
                 finish
@@ -124,7 +127,7 @@ const Index = () => {
                 style={{ marginLeft: '20px' }}
                 type="button"
                 onClick={() => {
-                  todoList.finish(v.id);
+                  state.finish(v.id);
                 }}
               >
                 finish
