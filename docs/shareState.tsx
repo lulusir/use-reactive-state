@@ -1,5 +1,8 @@
 import React from 'react';
-import { createReactiveState, useReactiveState } from 'use-reactive-state';
+import {
+  createReactiveState,
+  useReactiveState,
+} from '@lujs/use-reactive-state';
 
 class Vm {
   name = 'use-react-state';

@@ -1,8 +1,11 @@
 ## Hello use-reactive-state!
 
-### usage
+### Usage
 
-<code src="./demo.tsx" transform/>
-```typescript
-import { createReactiveState, useReactiveState } from 'use-reactive-state';
-```
+#### Basic
+
+<code src="./shareState.tsx" transform/>
+
+#### Todo list
+
+<code src="./todoList.tsx" transform/>

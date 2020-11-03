@@ -1,7 +1,60 @@
+/* eslint-disable max-classes-per-file */
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useReactiveState, createReactiveState } from './useReactiveState';
 
-// jest.useFakeTimers();
+class Todo {
+  content = '';
+
+  id = '';
+
+  status: 'done' | 'default' | 'delete' = 'default';
+
+  constructor(content: string) {
+    this.content = content;
+    this.id = Math.random().toString();
+  }
+
+  finish() {
+    if (this.status === 'default') {
+      this.status = 'done';
+    } else if (this.status === 'done') {
+      this.status = 'delete';
+    }
+  }
+
+  setContent(s: string) {
+    this.content = s;
+  }
+}
+
+class TodoList {
+  list: Todo[] = [];
+
+  addTodo(content: string) {
+    const todo = new Todo(content);
+    this.list.push(todo);
+  }
+
+  finish(id: string) {
+    this.list.forEach(v => {
+      if (v.id === id) {
+        v.finish();
+      }
+    });
+  }
+
+  defaultList() {
+    return this.list.filter(v => v.status === 'default');
+  }
+
+  doneList() {
+    return this.list.filter(v => v.status === 'done');
+  }
+
+  deleteList() {
+    return this.list.filter(v => v.status === 'delete');
+  }
+}
 
 describe('use reactive', () => {
   it('reactive', () => {
@@ -68,7 +121,7 @@ describe('use reactive', () => {
     expect(result.current.age).toBe(18);
     setTimeout(() => {
       obj.timeToFire();
-    }, 1000);
+    });
 
     await waitForNextUpdate();
 
@@ -115,10 +168,41 @@ describe('use reactive', () => {
 
     setTimeout(() => {
       obj.timeToFire();
-    }, 1000);
+    });
 
     await h1.waitForNextUpdate();
     expect(h1.result.current.age).toBe(35);
     expect(h2.result.current.age).toBe(35);
+  });
+
+  it('deep object', () => {
+    const todoList = createReactiveState(new TodoList());
+
+    const { result } = renderHook(() => useReactiveState(todoList));
+
+    expect(result.current.list.length).toBe(0);
+
+    // add todo
+    act(() => {
+      todoList.addTodo('test');
+    });
+
+    expect(result.current.list.length).toBe(1);
+    const t = result.current.list[0];
+    expect(t.content).toBe('test');
+    expect(t.status).toBe('default');
+    expect(t.id).not.toBe('');
+
+    // finish todo
+
+    act(() => {
+      const todo = todoList.list[0];
+      todo.finish();
+    });
+
+    const t1 = result.current.list[0];
+    expect(t1.content).toBe('test');
+    expect(t1.status).toBe('done');
+    expect(t1.id).not.toBe('');
   });
 });
