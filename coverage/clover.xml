@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1604372262962" clover="3.2.0">
+  <project timestamp="1604372262962" name="All files">
+    <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6" elements="20" coveredelements="20" complexity="0" loc="14" ncloc="14" packages="1" files="2" classes="2"/>
+    <file name="index.ts" path="/Users/lujunsheng/program/useViewModel/src/index.ts">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+    </file>
+    <file name="useReactiveState.ts" path="/Users/lujunsheng/program/useViewModel/src/useReactiveState.ts">
+      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+      <line num="14" count="7" type="stmt"/>
+      <line num="16" count="7" type="stmt"/>
+      <line num="18" count="15" type="stmt"/>
+      <line num="19" count="15" type="stmt"/>
+      <line num="20" count="15" type="stmt"/>
+      <line num="24" count="7" type="stmt"/>
+      <line num="27" count="7" type="stmt"/>
+      <line num="31" count="18" type="stmt"/>
+      <line num="32" count="18" type="stmt"/>
+      <line num="33" count="9" type="stmt"/>
+      <line num="34" count="10" type="stmt"/>
+      <line num="36" count="9" type="stmt"/>
+      <line num="37" count="9" type="stmt"/>
+      <line num="42" count="18" type="stmt"/>
+    </file>
+  </project>
+</coverage>
