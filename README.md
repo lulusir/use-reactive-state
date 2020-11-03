@@ -1,27 +1,57 @@
 # use-reactive-states
 
-## Getting Started
+```typescript
+import React from 'react';
+import { createReactiveState, useReactiveState } from 'use-reactive-state';
 
-Install dependencies,
+class Vm {
+  name = 'use-react-state';
 
-```bash
-$ npm i
-```
+  setName(name: string) {
+    this.name = name;
+  }
+}
 
-Start the dev server,
+const vm = createReactiveState(new Vm());
 
-```bash
-$ npm start
-```
+const ComA = () => {
+  const state = useReactiveState(vm);
+  return (
+    <div>
+      <p>name1:{state.name}</p>
+    </div>
+  );
+};
 
-Build documentation,
+const ComB = () => {
+  const state = useReactiveState(vm);
+  return (
+    <div>
+      <p>name2:{state.name}</p>
+    </div>
+  );
+};
 
-```bash
-$ npm run docs:build
-```
+const Index = () => {
+  const state = useReactiveState(vm);
 
-Build library via `father-build`,
+  return (
+    <div>
+      <ComA />
+      <ComB />
+      <p>name:{state.name}</p>
+      <button
+        type="button"
+        onClick={() => {
+          const n = Math.random().toString();
+          vm.setName(n);
+        }}
+      >
+        set name
+      </button>
+    </div>
+  );
+};
 
-```bash
-$ npm run build
+export default Index;
 ```
