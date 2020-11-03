@@ -1,8 +1,8 @@
 {
-  "private": true,
-  "name": "use-reactive-state",
+  "name": "@lujs/use-reactive-state",
   "version": "1.0.0",
   "scripts": {
+    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish",
     "start": "dumi dev",
     "docs:build": "dumi build",
     "docs:deploy": "gh-pages -d docs-dist",
@@ -13,6 +13,9 @@
     "test": "umi-test --watch",
     "test:coverage": "umi-test --coverage"
   },
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
@@ -27,12 +30,21 @@
       "prettier --parser=typescript --write"
     ]
   },
+  "keywords": [
+    "React",
+    "hook",
+    "state",
+    "useState",
+    "useReactiveState",
+    "rxjs"
+  ],
+  "author": "lujs",
+  "license": "MIT",
   "dependencies": {
     "react": "^16.12.0",
     "rxjs": "^6.6.3"
   },
   "devDependencies": {
-    "react-test-renderer": "^17.0.1",
     "@testing-library/react-hooks": "^3.4.2",
     "@types/jest": "^26.0.14",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
@@ -51,7 +63,9 @@
     "father-build": "^1.17.2",
     "gh-pages": "^3.0.0",
     "lint-staged": "^10.0.7",
+    "np": "^7.0.0",
     "prettier": "^1.19.1",
+    "react-test-renderer": "^17.0.1",
     "yorkie": "^2.0.0"
   }
 }
