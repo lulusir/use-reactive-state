@@ -1,6 +1,6 @@
 {
   "name": "@lujs/use-reactive-state",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "scripts": {
     "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish",
     "start": "dumi dev",
