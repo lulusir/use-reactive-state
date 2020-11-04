@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
-import { renderHook, act } from '@testing-library/react-hooks';
-import { useReactiveState, createReactiveState } from './useReactiveState';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { createReactiveState, useReactiveState } from './useReactiveState';
 
 class Todo {
   content = '';
@@ -56,8 +56,17 @@ class TodoList {
   }
 }
 
+function renderTestHook(obj: any) {
+  let _renderCount = 0;
+  return renderHook(() => {
+    useReactiveState(obj);
+    _renderCount += 1;
+    return _renderCount;
+  });
+}
+
 describe('use reactive', () => {
-  it('reactive', () => {
+  it('reactive', async () => {
     const obj = createReactiveState({
       name: 'lujs',
       age: 18,
@@ -65,45 +74,48 @@ describe('use reactive', () => {
         this.age = 35;
       },
     });
-    const { result } = renderHook(() => useReactiveState(obj));
-    expect(result.current.name).toBe('lujs');
+    const { result } = renderTestHook(obj);
 
+    // useReactiveState will trigger an render
+    const count = result.current;
     act(() => {
       obj.name = 'yahaha';
     });
-    expect(result.current.name).toBe('yahaha');
+
+    expect(result.current).toBe(count + 1);
   });
 
   it('array', () => {
     const obj = createReactiveState(['lujs', 18]);
-    const { result } = renderHook(() => useReactiveState(obj));
-    expect(result.current[0]).toBe('lujs');
+    const { result } = renderTestHook(obj);
 
+    const count = result.current;
     act(() => {
       obj[0] = 'yahaha';
     });
-    expect(result.current[0]).toBe('yahaha');
+    expect(result.current).toBe(count + 1);
   });
 
   it('array 2', () => {
     const obj = createReactiveState(['lujs', { age: 18 }]);
-    const { result } = renderHook(() => useReactiveState(obj));
-    expect(result.current[1].age).toBe(18);
+    const { result } = renderTestHook(obj);
 
+    const count = result.current;
     act(() => {
       obj[1] = { age: 35 };
     });
-    expect(result.current[1].age).toBe(35);
+    expect(result.current).toBe(count + 1);
   });
 
   it('array 3', () => {
     const obj = createReactiveState(['lujs', { age: 18 }]);
-    const { result } = renderHook(() => useReactiveState(obj));
+    const { result } = renderTestHook(obj);
 
+    const count = result.current;
     act(() => {
       obj.push({ house: 'none' });
     });
-    expect(result.current[2].house).toBe('none');
+    expect(result.current).toBe(count + 1);
   });
 
   it('async', async () => {
@@ -114,18 +126,17 @@ describe('use reactive', () => {
         this.age = 35;
       },
     });
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useReactiveState(obj),
-    );
 
-    expect(result.current.age).toBe(18);
+    const { result, waitForNextUpdate } = renderTestHook(obj);
+
+    const count = result.current;
     setTimeout(() => {
       obj.timeToFire();
     });
 
     await waitForNextUpdate();
 
-    expect(result.current.age).toBe(35);
+    expect(result.current).toBe(count + 1);
   });
 
   it('Multiple reactive', () => {
@@ -137,18 +148,17 @@ describe('use reactive', () => {
       },
     });
 
-    const h1 = renderHook(() => useReactiveState(obj));
-    const h2 = renderHook(() => useReactiveState(obj));
+    const h1 = renderTestHook(obj);
+    const h2 = renderTestHook(obj);
 
-    expect(h1.result.current.age).toBe(18);
-    expect(h2.result.current.age).toBe(18);
-
+    const count1 = h1.result.current;
+    const count2 = h2.result.current;
     act(() => {
       obj.timeToFire();
     });
 
-    expect(h1.result.current.age).toBe(35);
-    expect(h2.result.current.age).toBe(35);
+    expect(h1.result.current).toBe(count1 + 1);
+    expect(h2.result.current).toBe(count2 + 1);
   });
 
   it('Multiple async reactive', async () => {
@@ -160,38 +170,33 @@ describe('use reactive', () => {
       },
     });
 
-    const h1 = renderHook(() => useReactiveState(obj));
-    const h2 = renderHook(() => useReactiveState(obj));
+    const h1 = renderTestHook(obj);
+    const h2 = renderTestHook(obj);
 
-    expect(h1.result.current.age).toBe(18);
-    expect(h2.result.current.age).toBe(18);
+    const count1 = h1.result.current;
+    const count2 = h2.result.current;
 
     setTimeout(() => {
       obj.timeToFire();
     });
 
     await h1.waitForNextUpdate();
-    expect(h1.result.current.age).toBe(35);
-    expect(h2.result.current.age).toBe(35);
+    expect(h1.result.current).toBe(count1 + 1);
+    expect(h2.result.current).toBe(count2 + 1);
   });
 
   it('deep object', () => {
     const todoList = createReactiveState(new TodoList());
 
-    const { result } = renderHook(() => useReactiveState(todoList));
+    const { result } = renderTestHook(todoList);
 
-    expect(result.current.list.length).toBe(0);
-
+    const count = result.current;
     // add todo
     act(() => {
       todoList.addTodo('test');
     });
 
-    expect(result.current.list.length).toBe(1);
-    const t = result.current.list[0];
-    expect(t.content).toBe('test');
-    expect(t.status).toBe('default');
-    expect(t.id).not.toBe('');
+    expect(result.current).toBe(count + 1);
 
     // finish todo
 
@@ -200,9 +205,6 @@ describe('use reactive', () => {
       todo.finish();
     });
 
-    const t1 = result.current.list[0];
-    expect(t1.content).toBe('test');
-    expect(t1.status).toBe('done');
-    expect(t1.id).not.toBe('');
+    expect(result.current).toBe(count + 2);
   });
 });

@@ -63,18 +63,18 @@ class TodoList {
   }
 }
 
-const todoList = createReactiveState(new TodoList());
+const viewModel = createReactiveState(new TodoList());
 
 const Index = () => {
   const refInput = useRef<HTMLInputElement>(null);
-  const state = useReactiveState<TodoList>(todoList);
+  useReactiveState(viewModel);
 
-  const defaultList = state.defaultList();
-  const doneList = state.doneList();
-  const deleteList = state.deleteList();
+  const defaultList = viewModel.defaultList();
+  const doneList = viewModel.doneList();
+  const deleteList = viewModel.deleteList();
 
   useEffect(() => {
-    state.init();
+    viewModel.init();
   }, []);
 
   return (
@@ -88,7 +88,7 @@ const Index = () => {
             if (refInput.current) {
               const content = refInput.current.value;
               if (content) {
-                state.addTodo(content);
+                viewModel.addTodo(content);
               }
             }
           }}
@@ -107,7 +107,7 @@ const Index = () => {
                 style={{ marginLeft: '20px' }}
                 type="button"
                 onClick={() => {
-                  state.finish(v.id);
+                  viewModel.finish(v.id);
                 }}
               >
                 finish
@@ -127,7 +127,7 @@ const Index = () => {
                 style={{ marginLeft: '20px' }}
                 type="button"
                 onClick={() => {
-                  state.finish(v.id);
+                  viewModel.finish(v.id);
                 }}
               >
                 finish

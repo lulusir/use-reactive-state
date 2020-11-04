@@ -15,31 +15,31 @@ class Vm {
 const vm = createReactiveState(new Vm());
 
 const ComA = () => {
-  const state = useReactiveState(vm);
+  useReactiveState(vm);
   return (
     <div>
-      <p>name1:{state.name}</p>
+      <p>name1:{vm.name}</p>
     </div>
   );
 };
 
 const ComB = () => {
-  const state = useReactiveState(vm);
+  useReactiveState(vm);
   return (
     <div>
-      <p>name2:{state.name}</p>
+      <p>name2:{vm.name}</p>
     </div>
   );
 };
 
 const Index = () => {
-  const state = useReactiveState(vm);
+  useReactiveState(vm);
 
   return (
     <div>
       <ComA />
       <ComB />
-      <p>name:{state.name}</p>
+      <p>name:{vm.name}</p>
       <button
         type="button"
         onClick={() => {
