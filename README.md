@@ -2,6 +2,18 @@
 
 [demo](https://codesandbox.io/s/staging-sunset-y4cfe?file=/src/App.tsx)
 
+## install
+
+```
+npm i @lujs/use-reactive-state
+```
+
+or
+
+```
+yarn add @lujs/use-reactive-state
+```
+
 ## share state
 
 ```typescript
