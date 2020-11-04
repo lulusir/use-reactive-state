@@ -22,31 +22,31 @@ class Vm {
 const vm = createReactiveState(new Vm());
 
 const ComA = () => {
-  const state = useReactiveState(vm);
+  useReactiveState(vm);
   return (
     <div>
-      <p>name1:{state.name}</p>
+      <p>name1:{vm.name}</p>
     </div>
   );
 };
 
 const ComB = () => {
-  const state = useReactiveState(vm);
+  useReactiveState(vm);
   return (
     <div>
-      <p>name2:{state.name}</p>
+      <p>name2:{vm.name}</p>
     </div>
   );
 };
 
 const Index = () => {
-  const state = useReactiveState(vm);
+  useReactiveState(vm);
 
   return (
     <div>
       <ComA />
       <ComB />
-      <p>name:{state.name}</p>
+      <p>name:{vm.name}</p>
       <button
         type="button"
         onClick={() => {
@@ -66,7 +66,6 @@ export default Index;
 ## Deep object
 
 ```typescript
-// eslint-disable-next-line max-classes-per-file
 import {
   createReactiveState,
   useReactiveState,
@@ -131,18 +130,18 @@ class TodoList {
   }
 }
 
-const todoList = createReactiveState(new TodoList());
+const viewModel = createReactiveState(new TodoList());
 
 const Index = () => {
   const refInput = useRef<HTMLInputElement>(null);
-  const state = useReactiveState<TodoList>(todoList);
+  useReactiveState(viewModel);
 
-  const defaultList = state.defaultList();
-  const doneList = state.doneList();
-  const deleteList = state.deleteList();
+  const defaultList = viewModel.defaultList();
+  const doneList = viewModel.doneList();
+  const deleteList = viewModel.deleteList();
 
   useEffect(() => {
-    state.init();
+    viewModel.init();
   }, []);
 
   return (
@@ -156,7 +155,7 @@ const Index = () => {
             if (refInput.current) {
               const content = refInput.current.value;
               if (content) {
-                state.addTodo(content);
+                viewModel.addTodo(content);
               }
             }
           }}
@@ -175,7 +174,7 @@ const Index = () => {
                 style={{ marginLeft: '20px' }}
                 type="button"
                 onClick={() => {
-                  state.finish(v.id);
+                  viewModel.finish(v.id);
                 }}
               >
                 finish
@@ -195,7 +194,7 @@ const Index = () => {
                 style={{ marginLeft: '20px' }}
                 type="button"
                 onClick={() => {
-                  state.finish(v.id);
+                  viewModel.finish(v.id);
                 }}
               >
                 finish
