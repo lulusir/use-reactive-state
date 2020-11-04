@@ -33,11 +33,12 @@
   "keywords": [
     "React",
     "hook",
-    "state",
+    "state management",
     "useState",
     "useReactiveState",
-    "rxjs"
+    "view model"
   ],
+  "homepage": "https://github.com/lulusir/use-reactive-state",
   "bugs": {
     "url": "https://github.com/lulusir/use-reactive-state/issues",
     "email": "lujavascript@gmail.com"

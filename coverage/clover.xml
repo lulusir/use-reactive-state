@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1604372262962" clover="3.2.0">
-  <project timestamp="1604372262962" name="All files">
-    <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6" elements="20" coveredelements="20" complexity="0" loc="14" ncloc="14" packages="1" files="2" classes="2"/>
-    <file name="index.ts" path="/Users/lujunsheng/program/useViewModel/src/index.ts">
+<coverage generated="1604503745776" clover="3.2.0">
+  <project timestamp="1604503745776" name="All files">
+    <metrics statements="27" coveredstatements="27" conditionals="12" coveredconditionals="12" methods="10" coveredmethods="10" elements="49" coveredelements="49" complexity="0" loc="27" ncloc="27" packages="1" files="2" classes="2"/>
+    <file name="index.ts" path="/Users/lujunsheng/program/useReactiveState/src/index.ts">
       <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
     </file>
-    <file name="useReactiveState.ts" path="/Users/lujunsheng/program/useViewModel/src/useReactiveState.ts">
-      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
-      <line num="14" count="7" type="stmt"/>
-      <line num="16" count="7" type="stmt"/>
-      <line num="18" count="15" type="stmt"/>
-      <line num="19" count="15" type="stmt"/>
-      <line num="20" count="15" type="stmt"/>
-      <line num="24" count="7" type="stmt"/>
-      <line num="27" count="7" type="stmt"/>
-      <line num="31" count="18" type="stmt"/>
-      <line num="32" count="18" type="stmt"/>
-      <line num="33" count="9" type="stmt"/>
-      <line num="34" count="10" type="stmt"/>
-      <line num="36" count="9" type="stmt"/>
-      <line num="37" count="9" type="stmt"/>
-      <line num="42" count="18" type="stmt"/>
+    <file name="useReactiveState.ts" path="/Users/lujunsheng/program/useReactiveState/src/useReactiveState.ts">
+      <metrics statements="27" coveredstatements="27" conditionals="12" coveredconditionals="12" methods="10" coveredmethods="10"/>
+      <line num="9" count="1" type="stmt"/>
+      <line num="10" count="258" type="cond" truecount="2" falsecount="0"/>
+      <line num="13" count="9" type="stmt"/>
+      <line num="15" count="9" type="stmt"/>
+      <line num="16" count="237" type="cond" truecount="2" falsecount="0"/>
+      <line num="18" count="9" type="stmt"/>
+      <line num="22" count="9" type="stmt"/>
+      <line num="23" count="60" type="stmt"/>
+      <line num="25" count="237" type="stmt"/>
+      <line num="26" count="237" type="stmt"/>
+      <line num="29" count="34" type="stmt"/>
+      <line num="30" count="34" type="stmt"/>
+      <line num="31" count="34" type="cond" truecount="2" falsecount="0"/>
+      <line num="32" count="21" type="stmt"/>
+      <line num="37" count="21" type="cond" truecount="4" falsecount="0"/>
+      <line num="42" count="21" type="cond" truecount="2" falsecount="0"/>
+      <line num="43" count="10" type="stmt"/>
+      <line num="46" count="34" type="stmt"/>
+      <line num="49" count="60" type="stmt"/>
+      <line num="52" count="9" type="stmt"/>
+      <line num="53" count="9" type="stmt"/>
+      <line num="57" count="23" type="stmt"/>
+      <line num="58" count="23" type="stmt"/>
+      <line num="59" count="11" type="stmt"/>
+      <line num="61" count="12" type="stmt"/>
+      <line num="63" count="11" type="stmt"/>
+      <line num="64" count="11" type="stmt"/>
     </file>
   </project>
 </coverage>

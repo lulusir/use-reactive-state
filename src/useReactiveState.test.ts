@@ -66,6 +66,25 @@ function renderTestHook(obj: any) {
 }
 
 describe('use reactive', () => {
+  it('render one time', async () => {
+    const obj = createReactiveState({
+      name: 'lujs',
+      age: 18,
+      timeToFire() {
+        this.age = 35;
+      },
+    });
+    const { result } = renderTestHook(obj);
+
+    // useReactiveState will trigger an render
+    const count = result.current;
+    expect(count).toBe(1);
+    act(() => {
+      obj.name = 'yahaha';
+    });
+
+    expect(result.current).toBe(2);
+  });
   it('reactive', async () => {
     const obj = createReactiveState({
       name: 'lujs',

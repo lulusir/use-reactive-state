@@ -19,8 +19,8 @@ export function createReactiveState<T extends object>(obj: T) {
     _subject: subject,
   });
 
-  const reactive = (obj1: T) => {
-    const proxy = new Proxy(obj1, {
+  const reactive = (o: T) => {
+    const proxy = new Proxy(o, {
       get(target, key, receiver) {
         const result = Reflect.get(target, key, receiver);
         return convert(result);
@@ -30,8 +30,18 @@ export function createReactiveState<T extends object>(obj: T) {
         let result = true;
         if (oldValue !== value) {
           result = Reflect.set(target, key, value, receiver);
-          // console.log('next', key, value);
-          subject.next(target);
+
+          // skip subscribe
+
+          const skip =
+            isObject(value) &&
+            Number.isInteger(Number(key)) &&
+            Reflect.getPrototypeOf(value).constructor.name === 'Subscriber' &&
+            Array.isArray(receiver);
+
+          if (!skip) {
+            subject.next(target);
+          }
         }
         return result;
       },
@@ -46,11 +56,9 @@ export function createReactiveState<T extends object>(obj: T) {
 export function useReactiveState<T extends object>(obj: IObservable<T>) {
   const [, setState] = useState({});
   useEffect(() => {
-    // Todo: will trigger an render
     const s = obj._subject.subscribe(x => {
       // notify react to update
       setState({});
-      // console.log(obj, '==obj');
     });
     return () => {
       s.unsubscribe();
