@@ -38,6 +38,10 @@
     "useReactiveState",
     "rxjs"
   ],
+  "bugs": {
+    "url": "https://github.com/lulusir/use-reactive-state/issues",
+    "email": "lujavascript@gmail.com"
+  },
   "author": "lujs",
   "license": "MIT",
   "dependencies": {
