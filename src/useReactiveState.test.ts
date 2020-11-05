@@ -76,7 +76,6 @@ describe('use reactive', () => {
     });
     const { result } = renderTestHook(obj);
 
-    // useReactiveState will trigger an render
     const count = result.current;
     expect(count).toBe(1);
     act(() => {
@@ -84,6 +83,27 @@ describe('use reactive', () => {
     });
 
     expect(result.current).toBe(2);
+  });
+
+  it('render one time 1', async () => {
+    const obj = createReactiveState({
+      name: 'lujs',
+      age: 18,
+      timeToFire() {
+        this.age = 35;
+      },
+    });
+    const h1 = renderTestHook(obj);
+    const h2 = renderTestHook(obj);
+
+    expect(h1.result.current).toBe(1);
+    expect(h2.result.current).toBe(1);
+    act(() => {
+      obj.name = 'yahaha';
+    });
+
+    expect(h1.result.current).toBe(2);
+    expect(h2.result.current).toBe(2);
   });
   it('reactive', async () => {
     const obj = createReactiveState({

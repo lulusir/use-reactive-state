@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useState, useEffect } from 'react';
-import { Subject } from 'rxjs';
+import { Subject, Subscriber } from 'rxjs';
 
 type IObservable<T> = T & {
   _subject: Subject<T>;
@@ -36,7 +36,7 @@ export function createReactiveState<T extends object>(obj: T) {
           const skip =
             isObject(value) &&
             Number.isInteger(Number(key)) &&
-            Reflect.getPrototypeOf(value).constructor.name === 'Subscriber' &&
+            Reflect.getPrototypeOf(value) === Subscriber.prototype &&
             Array.isArray(receiver);
 
           if (!skip) {

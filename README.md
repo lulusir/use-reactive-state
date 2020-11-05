@@ -1,5 +1,7 @@
 # use-reactive-states
 
+[![npm](https://img.shields.io/npm/v/@lujs/use-reactive-state)](https://www.npmjs.com/package/@lujs/use-reactive-state)
+
 [demo](https://codesandbox.io/s/staging-sunset-y4cfe?file=/src/App.tsx)
 
 ## install
