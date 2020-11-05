@@ -45,9 +45,11 @@
   },
   "author": "lujs",
   "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "rxjs": "^6.6.3"
+  },
   "devDependencies": {
-    "react": "^16.12.0",
-    "rxjs": "^6.6.3",
     "@testing-library/react-hooks": "^3.4.2",
     "@types/jest": "^26.0.14",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
