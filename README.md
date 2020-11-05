@@ -2,7 +2,16 @@
 
 [![npm](https://img.shields.io/npm/v/@lujs/use-reactive-state)](https://www.npmjs.com/package/@lujs/use-reactive-state)
 
-[demo](https://codesandbox.io/s/staging-sunset-y4cfe?file=/src/App.tsx)
+> Reactive state manager for React
+
+## 特性
+
+- Simple
+- Born for DDD(Domain-Driven Design)
+- Distinguish between business state and UI state of components
+- Typescript support
+
+[![Edit](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/staging-sunset-y4cfe?file=/src/App.tsx)
 
 ## install
 
