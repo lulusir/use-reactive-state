@@ -7,7 +7,6 @@
 ## 特性
 
 - Simple
-- Born for DDD(Domain-Driven Design)
 - Distinguish between business state and UI state of components
 - Typescript support
 
