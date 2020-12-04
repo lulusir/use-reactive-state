@@ -31,8 +31,6 @@ export function createReactiveState<T extends object>(obj: T) {
         if (oldValue !== value) {
           result = Reflect.set(target, key, value, receiver);
 
-          // skip subscribe
-
           const skip =
             isObject(value) &&
             Number.isInteger(Number(key)) &&
@@ -57,7 +55,6 @@ export function useReactiveState<T extends object>(obj: IObservable<T>) {
   const [, setState] = useState({});
   useEffect(() => {
     const s = obj._subject.subscribe(x => {
-      // notify react to update
       setState({});
     });
     return () => {
