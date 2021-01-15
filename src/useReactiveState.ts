@@ -55,7 +55,7 @@ export function useReactiveState<T extends object>(obj: IObservable<T>) {
   const [, setState] = useState({});
   useEffect(() => {
     const s = obj._subject.subscribe(x => {
-      setState({});
+      setState({ state: obj });
     });
     return () => {
       s.unsubscribe();
