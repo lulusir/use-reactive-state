@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useDebugValue } from 'react';
 import { Subject, Subscriber } from 'rxjs';
 
 type IObservable<T> = T & {
@@ -53,9 +53,10 @@ export function createReactiveState<T extends object>(obj: T) {
 
 export function useReactiveState<T extends object>(obj: IObservable<T>) {
   const [, setState] = useState({});
+  useDebugValue(obj, o => o);
   useEffect(() => {
     const s = obj._subject.subscribe(x => {
-      setState({ state: obj });
+      setState({});
     });
     return () => {
       s.unsubscribe();
