@@ -24,6 +24,10 @@ or
 yarn add @lujs/use-reactive-state
 ```
 
+## debug
+
+![image](https://raw.githubusercontent.com/lulusir/use-reactive-state/main/images/debugValue.png?token=AD4PXKV5M4RDAYHG6WKTL53ACDOUU)
+
 ## share state
 
 ```typescript
