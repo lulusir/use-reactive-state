@@ -1,6 +1,6 @@
 {
   "name": "@lujs/use-reactive-state",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "scripts": {
     "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish",
     "start": "dumi dev",
@@ -52,6 +52,9 @@
   "devDependencies": {
     "@testing-library/react-hooks": "^3.4.2",
     "@types/jest": "^26.0.14",
+    "@types/lodash.at": "^4.6.6",
+    "@types/lodash.clonedeep": "^4.5.6",
+    "@types/lodash.isequal": "^4.5.5",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "@umijs/preset-react": "1.x",
@@ -71,10 +74,7 @@
     "np": "^7.0.0",
     "prettier": "^1.19.1",
     "react-test-renderer": "^17.0.1",
-    "yorkie": "^2.0.0",
-    "@types/lodash.at": "^4.6.6",
-    "@types/lodash.clonedeep": "^4.5.6",
-    "@types/lodash.isequal": "^4.5.5"
+    "yorkie": "^2.0.0"
   },
   "dependencies": {
     "lodash.at": "^4.6.0",
