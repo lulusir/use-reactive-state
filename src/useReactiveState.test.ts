@@ -43,6 +43,14 @@ class TodoList {
     });
   }
 
+  finishByContent(content: string) {
+    this.list.forEach(v => {
+      if (v.content === content) {
+        v.finish();
+      }
+    });
+  }
+
   defaultList() {
     return this.list.filter(v => v.status === 'default');
   }
@@ -56,10 +64,10 @@ class TodoList {
   }
 }
 
-function renderTestHook(obj: any) {
+function renderTestHook(obj: any, path?: string) {
   let _renderCount = 0;
   return renderHook(() => {
-    useReactiveState(obj);
+    useReactiveState(obj, path);
     _renderCount += 1;
     return _renderCount;
   });
@@ -245,5 +253,104 @@ describe('use reactive', () => {
     });
 
     expect(result.current).toBe(count + 2);
+  });
+
+  it('no render when value same', () => {
+    const state = createReactiveState({
+      name: 'lujs',
+    });
+
+    const { result } = renderTestHook(state);
+
+    const count = result.current;
+    // add todo
+    act(() => {
+      state.name = 'lujs';
+    });
+
+    expect(result.current).toBe(count);
+
+    act(() => {
+      state.name = 'lujs';
+    });
+
+    expect(result.current).toBe(count);
+  });
+
+  it('selector', () => {
+    const state = createReactiveState({
+      name: 'lujs',
+      obj: {
+        age: 18,
+      },
+    });
+
+    const selector = 'obj.age';
+    const { result } = renderTestHook(state, selector);
+
+    const count = result.current;
+    // add todo
+    act(() => {
+      state.name = 'lujs';
+    });
+
+    expect(result.current).toBe(count);
+
+    act(() => {
+      state.obj.age = 19;
+    });
+
+    expect(result.current).toBe(count + 1);
+  });
+
+  it('selector1', () => {
+    const state = createReactiveState({
+      name: 'lujs',
+      obj: {
+        age: 18,
+      },
+    });
+
+    const selector = 'name';
+    const { result } = renderTestHook(state, selector);
+
+    const count = result.current;
+    // add todo
+    act(() => {
+      state.name = 'lujs1';
+    });
+
+    expect(result.current).toBe(count + 1);
+
+    act(() => {
+      state.obj.age = 19;
+    });
+
+    expect(result.current).toBe(count + 1);
+  });
+
+  it('selector2', () => {
+    const state = createReactiveState(new TodoList());
+    const c1 = 'c1';
+    const c2 = 'c2';
+    state.addTodo(c1);
+    state.addTodo(c2);
+
+    const selector = 'list[0]';
+    const { result } = renderTestHook(state, selector);
+
+    const count = result.current;
+    // add todo
+    act(() => {
+      state.finishByContent(c1);
+    });
+
+    expect(result.current).toBe(count + 1);
+
+    act(() => {
+      state.finishByContent(c2);
+    });
+
+    expect(result.current).toBe(count + 1);
   });
 });

@@ -28,6 +28,27 @@ yarn add @lujs/use-reactive-state
 
 ![image](https://raw.githubusercontent.com/lulusir/use-reactive-state/main/images/debugValue.png?token=AD4PXKV5M4RDAYHG6WKTL53ACDOUU)
 
+## selector
+
+```typescript
+const state = createReactiveState({
+  name: 'lujs',
+  obj: {
+    age: 18,
+  },
+});
+
+// ComA will render when state.obj.age change
+const ComA = () => {
+  useReactiveState(state, 'obj.age');
+  return (
+    <div>
+      <p>name1:{state.obj.age}</p>
+    </div>
+  );
+};
+```
+
 ## share state
 
 ```typescript

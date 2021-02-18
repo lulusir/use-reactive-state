@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { useState, useEffect, useDebugValue } from 'react';
+import { useState, useEffect, useDebugValue, useRef } from 'react';
 import { Subject, Subscriber } from 'rxjs';
+// import { distinct, distinctUntilChanged } from 'rxjs/operators';
+import at from 'lodash.at';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
 
 type IObservable<T> = T & {
   _subject: Subject<T>;
@@ -8,6 +12,8 @@ type IObservable<T> = T & {
 
 const isObject = (val: any): val is Record<any, any> =>
   val !== null && typeof val === 'object';
+
+// const isFunction = (val: any): val is Function => typeof val === 'function';
 
 export function createReactiveState<T extends object>(obj: T) {
   const subject = new Subject<T>();
@@ -51,12 +57,33 @@ export function createReactiveState<T extends object>(obj: T) {
   return proxy as IObservable<T>;
 }
 
-export function useReactiveState<T extends object>(obj: IObservable<T>) {
+export function useReactiveState<T extends object>(
+  obj: IObservable<T>,
+  selectorPath?: string,
+) {
   const [, setState] = useState({});
+  const lastPath = useRef(selectorPath);
+  const lastState = useRef<T | undefined>(undefined);
+
   useDebugValue(obj, o => o);
+
   useEffect(() => {
     const s = obj._subject.subscribe(x => {
-      setState({});
+      const update = () => setState({});
+      if (selectorPath !== undefined) {
+        if (lastPath.current === selectorPath) {
+          const selectorState = at(obj, selectorPath)[0] as T;
+          if (!isEqual(selectorState, lastState.current)) {
+            update();
+            lastState.current = cloneDeep(selectorState);
+          }
+          lastPath.current = selectorPath;
+        } else {
+          update();
+        }
+      } else {
+        update();
+      }
     });
     return () => {
       s.unsubscribe();
