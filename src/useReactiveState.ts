@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useState, useEffect, useDebugValue, useRef } from 'react';
 import { Subject, Subscriber } from 'rxjs';
-import at from 'lodash.at';
+// import at from 'lodash.at';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 
@@ -71,17 +71,12 @@ export function useReactiveState<T extends object>(
     const s = obj._subject.subscribe(x => {
       const update = () => setState({});
       if (isFunction(selector)) {
-        // if (lastSelector.current === selector) {
-        // const selectorState = at(obj, selectorPath)[0] as T;
         const selectorState = selector(obj);
         if (!isEqual(selectorState, lastState.current)) {
           update();
           lastState.current = cloneDeep(selectorState);
         }
         lastSelector.current = selector;
-        // } else {
-        //   update();
-        // }
       } else {
         update();
       }
