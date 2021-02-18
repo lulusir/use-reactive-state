@@ -64,10 +64,10 @@ class TodoList {
   }
 }
 
-function renderTestHook(obj: any, path?: string) {
+function renderTestHook<T = any>(obj: T, path?: (t: T) => any) {
   let _renderCount = 0;
   return renderHook(() => {
-    useReactiveState(obj, path);
+    useReactiveState<T>(obj, path);
     _renderCount += 1;
     return _renderCount;
   });
@@ -285,8 +285,8 @@ describe('use reactive', () => {
       },
     });
 
-    const selector = 'obj.age';
-    const { result } = renderTestHook(state, selector);
+    // const selector = 'obj.age';
+    const { result } = renderTestHook(state, s => s.obj.age);
 
     const count = result.current;
     // add todo
@@ -311,8 +311,7 @@ describe('use reactive', () => {
       },
     });
 
-    const selector = 'name';
-    const { result } = renderTestHook(state, selector);
+    const { result } = renderTestHook(state, s => s.name);
 
     const count = result.current;
     // add todo
@@ -336,8 +335,7 @@ describe('use reactive', () => {
     state.addTodo(c1);
     state.addTodo(c2);
 
-    const selector = 'list[0]';
-    const { result } = renderTestHook(state, selector);
+    const { result } = renderTestHook(state, s => s.list[0]);
 
     const count = result.current;
     // add todo

@@ -12,7 +12,7 @@ type IObservable<T> = T & {
 const isObject = (val: any): val is Record<any, any> =>
   val !== null && typeof val === 'object';
 
-// const isFunction = (val: any): val is Function => typeof val === 'function';
+const isFunction = (val: any): val is Function => typeof val === 'function';
 
 export function createReactiveState<T extends object>(obj: T) {
   const subject = new Subject<T>();
@@ -58,10 +58,11 @@ export function createReactiveState<T extends object>(obj: T) {
 
 export function useReactiveState<T extends object>(
   obj: IObservable<T>,
-  selectorPath?: string,
+  selector?: (t: T) => any,
+  // selectorPath?: string,
 ) {
   const [, setState] = useState({});
-  const lastPath = useRef(selectorPath);
+  const lastSelector = useRef(selector);
   const lastState = useRef<T | undefined>(undefined);
 
   useDebugValue(obj, o => o);
@@ -69,17 +70,18 @@ export function useReactiveState<T extends object>(
   useEffect(() => {
     const s = obj._subject.subscribe(x => {
       const update = () => setState({});
-      if (selectorPath !== undefined) {
-        if (lastPath.current === selectorPath) {
-          const selectorState = at(obj, selectorPath)[0] as T;
-          if (!isEqual(selectorState, lastState.current)) {
-            update();
-            lastState.current = cloneDeep(selectorState);
-          }
-          lastPath.current = selectorPath;
-        } else {
+      if (isFunction(selector)) {
+        // if (lastSelector.current === selector) {
+        // const selectorState = at(obj, selectorPath)[0] as T;
+        const selectorState = selector(obj);
+        if (!isEqual(selectorState, lastState.current)) {
           update();
+          lastState.current = cloneDeep(selectorState);
         }
+        lastSelector.current = selector;
+        // } else {
+        //   update();
+        // }
       } else {
         update();
       }

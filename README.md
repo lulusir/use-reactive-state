@@ -40,7 +40,7 @@ const state = createReactiveState({
 
 // ComA will render when state.obj.age change
 const ComA = () => {
-  useReactiveState(state, 'obj.age');
+  useReactiveState(state, s => s.obj.age);
   return (
     <div>
       <p>name1:{state.obj.age}</p>
