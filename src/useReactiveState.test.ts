@@ -113,6 +113,28 @@ describe('use reactive', () => {
     expect(h1.result.current).toBe(2);
     expect(h2.result.current).toBe(2);
   });
+
+  it('render one time 2', async () => {
+    const obj = createReactiveState({
+      name: 'lujs',
+      age: 18,
+      timeToFire() {
+        this.age = 35;
+      },
+    });
+    const h1 = renderTestHook(obj, s => s.name);
+
+    expect(h1.result.current).toBe(1);
+    act(() => {
+      obj.name = 'yahaha';
+    });
+    expect(h1.result.current).toBe(2);
+
+    act(() => {
+      obj.age = 1;
+    });
+    expect(h1.result.current).toBe(2);
+  });
   it('reactive', async () => {
     const obj = createReactiveState({
       name: 'lujs',
@@ -350,5 +372,33 @@ describe('use reactive', () => {
     });
 
     expect(result.current).toBe(count + 1);
+  });
+
+  it('subscribe ', done => {
+    const s = createReactiveState({ name: 'lujs' });
+    s.subscribe(({ name }) => {
+      expect(name).toBe('yahaha');
+      done();
+    });
+    s.name = 'yahaha';
+  });
+
+  it('subscribe 1', () => {
+    const callback = jest.fn();
+    const s = createReactiveState({ name: 'lujs' });
+    s.subscribe(callback);
+    expect(callback).not.toBeCalled();
+    s.name = 'yahaha';
+    expect(callback).toBeCalled();
+  });
+
+  it('unsubscribe ', () => {
+    const callback = jest.fn();
+
+    const s = createReactiveState({ name: 'lujs' });
+    const subject = s.subscribe(callback);
+    subject.unsubscribe();
+    s.name = 'yahaha';
+    expect(callback).not.toBeCalled();
   });
 });

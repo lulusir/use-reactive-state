@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useState, useEffect, useDebugValue, useRef } from 'react';
-import { Subject, Subscriber } from 'rxjs';
+import { Subject, Subscriber, Subscription } from 'rxjs';
 // import at from 'lodash.at';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 
 type IObservable<T> = T & {
   _subject: Subject<T>;
+  subscribe: (next?: (value: T) => void) => Subscription;
 };
 
 const isObject = (val: any): val is Record<any, any> =>
@@ -22,6 +23,10 @@ export function createReactiveState<T extends object>(obj: T) {
 
   Object.assign(obj, {
     _subject: subject,
+    subscribe: (next?: (value: T) => void) => {
+      const unsubscribe = subject.subscribe(next);
+      return unsubscribe;
+    },
   });
 
   const reactive = (o: T) => {

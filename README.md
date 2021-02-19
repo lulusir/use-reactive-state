@@ -269,3 +269,19 @@ const Index = () => {
 
 export default Index;
 ```
+
+## subscribe
+
+```typescript
+const state = createReactiveState({
+  name: 'lujs',
+  obj: {
+    age: 18,
+  },
+});
+
+const subject = state.subscribe(callback);
+
+// unsubscribe
+subject.unsubscribe();
+```

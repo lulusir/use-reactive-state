@@ -46,8 +46,7 @@
   "author": "lujs",
   "license": "MIT",
   "peerDependencies": {
-    "react": "^16.8.6",
-    "rxjs": "^6.6.3"
+    "react": "^16.8.6"
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^3.4.2",
@@ -79,6 +78,7 @@
   "dependencies": {
     "lodash.at": "^4.6.0",
     "lodash.clonedeep": "^4.5.0",
-    "lodash.isequal": "^4.5.0"
+    "lodash.isequal": "^4.5.0",
+    "rxjs": "^6.6.3"
   }
 }
