@@ -123,17 +123,18 @@ describe('use reactive', () => {
       },
     });
     const h1 = renderTestHook(obj, s => s.name);
+    const count = h1.result.current;
 
-    expect(h1.result.current).toBe(1);
+    // expect(h1.result.current).toBe(1);
     act(() => {
       obj.name = 'yahaha';
     });
-    expect(h1.result.current).toBe(2);
+    expect(h1.result.current).toBe(count + 1);
 
     act(() => {
       obj.age = 1;
     });
-    expect(h1.result.current).toBe(2);
+    expect(h1.result.current).toBe(count + 1);
   });
   it('reactive', async () => {
     const obj = createReactiveState({
@@ -369,6 +370,35 @@ describe('use reactive', () => {
 
     act(() => {
       state.finishByContent(c2);
+    });
+
+    expect(result.current).toBe(count + 1);
+  });
+
+  it('selector3', () => {
+    const state = createReactiveState({
+      a: {
+        b: {
+          c: {
+            d: 1,
+          },
+        },
+        e: 233,
+      },
+    });
+
+    const { result } = renderTestHook(state, s => s.a.b);
+
+    const count = result.current;
+    // add todo
+    act(() => {
+      state.a.e = 234;
+    });
+
+    expect(result.current).toBe(count);
+
+    act(() => {
+      state.a.b = 122;
     });
 
     expect(result.current).toBe(count + 1);
