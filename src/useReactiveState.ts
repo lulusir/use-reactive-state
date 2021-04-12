@@ -14,7 +14,19 @@ const isObject = (val: any): val is Record<any, any> =>
 
 const isFunction = (val: any): val is Function => typeof val === 'function';
 
+const proxyMap = new WeakMap();
+const rawMap = new WeakMap();
+
 export function createReactiveState<T extends object>(obj: T) {
+  const oldProxyObj = proxyMap.get(obj);
+  if (oldProxyObj) {
+    return oldProxyObj;
+  }
+
+  if (rawMap.has(obj)) {
+    return obj;
+  }
+
   const subject = new Subject<T>();
 
   const convert = (target: any): any =>
