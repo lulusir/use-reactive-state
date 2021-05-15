@@ -3,6 +3,7 @@ import { useState, useEffect, useDebugValue, useRef } from 'react';
 import { Subject, Subscriber, Subscription } from 'rxjs';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
+import './requestIdleCallback';
 
 type IObservable<T> = T & {
   _subject: Subject<T>;
@@ -30,7 +31,7 @@ export function createReactiveState<T extends object>(obj: T) {
   const subject = new Subject<T>();
 
   const convert = (target: any): any =>
-    isObject(target) ? reactive(target) : target;
+    isObject(target) ? reactive(target, whenValueSet) : target;
 
   Object.assign(obj, {
     _subject: subject,
@@ -40,7 +41,31 @@ export function createReactiveState<T extends object>(obj: T) {
     },
   });
 
-  const reactive = (o: T) => {
+  const whenValueSet = (
+    target: any,
+    key: string | symbol,
+    value: any,
+    receiver: any,
+  ) => {
+    const skip =
+      isObject(value) &&
+      Number.isInteger(Number(key)) &&
+      Reflect.getPrototypeOf(value) === Subscriber.prototype &&
+      Array.isArray(receiver);
+    if (!skip) {
+      subject.next(target);
+    }
+  };
+
+  const reactive = (
+    o: T,
+    callback: (
+      target: T,
+      key: string | symbol,
+      value: any,
+      receiver: any,
+    ) => void,
+  ) => {
     const proxy = new Proxy(o, {
       get(target, key, receiver) {
         const result = Reflect.get(target, key, receiver);
@@ -52,15 +77,7 @@ export function createReactiveState<T extends object>(obj: T) {
         if (oldValue !== value) {
           result = Reflect.set(target, key, value, receiver);
 
-          const skip =
-            isObject(value) &&
-            Number.isInteger(Number(key)) &&
-            Reflect.getPrototypeOf(value) === Subscriber.prototype &&
-            Array.isArray(receiver);
-
-          if (!skip) {
-            subject.next(target);
-          }
+          callback(target, key, value, receiver);
         }
         return result;
       },
@@ -68,14 +85,20 @@ export function createReactiveState<T extends object>(obj: T) {
     return proxy;
   };
 
-  const proxy = reactive(obj);
+  const proxy = reactive(obj, whenValueSet);
   return proxy as IObservable<T>;
 }
 
 export function useReactiveState<T extends object>(
   obj: IObservable<T>,
-  selector?: (t: T) => any,
+  config: {
+    sync?: boolean; // 是否异步更新 默认异步
+    selector?: (t: T) => any;
+  } = {
+    sync: false,
+  },
 ) {
+  const { selector, sync } = config;
   const [, setState] = useState({});
   const lastState = useRef<T | undefined>(undefined);
 
