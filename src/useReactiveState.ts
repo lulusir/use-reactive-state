@@ -94,13 +94,12 @@ export function useReactiveState<T extends object>(
   config: {
     sync?: boolean; // 是否异步更新 默认异步
     selector?: (t: T) => any;
-  } = {
-    sync: false,
-  },
+  } = {},
 ) {
-  const { selector, sync } = config;
+  const { selector = null, sync = false } = config;
   const [, setState] = useState({});
   const lastState = useRef<T | undefined>(undefined);
+  const changed = useRef(false);
 
   useDebugValue(obj, o => o);
 
@@ -112,10 +111,11 @@ export function useReactiveState<T extends object>(
 
     setLastState();
 
-    const s = obj._subject.subscribe(x => {
+    const updateState = () => {
       const update = () => setState({});
       if (isFunction(selector)) {
         const selectorState = selector(obj);
+
         if (lastState.current !== undefined) {
           if (!isEqual(selectorState, lastState.current)) {
             update();
@@ -125,9 +125,30 @@ export function useReactiveState<T extends object>(
       } else {
         update();
       }
+    };
+
+    let timer: NodeJS.Timeout | null = null;
+    if (!sync) {
+      timer = setInterval(() => {
+        if (changed.current) {
+          updateState();
+          changed.current = false;
+        }
+      });
+    }
+
+    const s = obj._subject.subscribe(x => {
+      if (!sync) {
+        changed.current = true;
+      } else {
+        updateState();
+      }
     });
     return () => {
       s.unsubscribe();
+      if (timer) {
+        clearInterval(timer);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
