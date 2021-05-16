@@ -3,7 +3,6 @@ import { useState, useEffect, useDebugValue, useRef } from 'react';
 import { Subject, Subscriber, Subscription } from 'rxjs';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-import './requestIdleCallback';
 
 type IObservable<T> = T & {
   _subject: Subject<T>;
