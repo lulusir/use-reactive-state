@@ -126,11 +126,28 @@ describe('use reactive', () => {
         this.age = 35;
       },
     });
-    const { result, waitForNextUpdate } = renderTestHookSync(obj);
+    const { result } = renderTestHookSync(obj);
     const count = result.current;
     expect(count).toBe(1);
     act(() => {
       obj.name = 'yahaha';
+    });
+    expect(result.current).toBe(2);
+  });
+
+  it('delete', async () => {
+    const obj = createReactiveState({
+      name: 'lujs',
+      age: 18,
+      timeToFire() {
+        this.age = 35;
+      },
+    });
+    const { result } = renderTestHookSync(obj);
+    const count = result.current;
+    expect(count).toBe(1);
+    act(() => {
+      delete obj.name;
     });
     expect(result.current).toBe(2);
   });
@@ -257,7 +274,7 @@ describe('use reactive', () => {
     expect(result.current).toBe(count + 1);
   });
 
-  it('Multiple reactive', () => {
+  it('Multiple reactive', done => {
     const obj = createReactiveState({
       name: 'lujs',
       age: 18,
@@ -272,8 +289,11 @@ describe('use reactive', () => {
     act(() => {
       obj.timeToFire();
     });
-    expect(h1.result.current).toBe(count1 + 1);
-    expect(h2.result.current).toBe(count2 + 1);
+    setTimeout(() => {
+      expect(h1.result.current).toBe(count1 + 1);
+      expect(h2.result.current).toBe(count2 + 1);
+      done();
+    }, 16);
   });
 
   it('deep object', () => {
@@ -412,11 +432,9 @@ describe('use reactive async', () => {
       obj.name = 'yahaha';
       obj.name = 19;
     });
-
     await waitForNextUpdate();
     expect(result.current).toBe(2);
   });
-
   it('Sync mode, Modify twice， render twice', async () => {
     const obj = createReactiveState({
       name: 'lujs',
@@ -438,7 +456,6 @@ describe('use reactive async', () => {
     });
     expect(result.current).toBe(3);
   });
-
   it('ASync mode, Modify twice，render one time', async () => {
     const obj = createReactiveState({
       name: 'lujs',
@@ -494,6 +511,7 @@ describe('use reactive async', () => {
     expect(h2.result.current).toBe(1);
     obj.name = 'yahaha';
     obj.timeToFire();
+    await h1.waitForNextUpdate();
 
     setTimeout(() => {
       expect(h1.result.current).toBe(2);
@@ -516,7 +534,6 @@ describe('use reactive async', () => {
     obj.name = 'yahaha';
     await h1.waitForNextUpdate();
     expect(h1.result.current).toBe(count + 1);
-
     // Don't render
     obj.age = 1;
     setTimeout(() => {
@@ -524,7 +541,6 @@ describe('use reactive async', () => {
       done();
     }, 16);
   });
-
   it('ASync mode,  reactive', async () => {
     const obj = createReactiveState({
       name: 'lujs',
@@ -540,7 +556,6 @@ describe('use reactive async', () => {
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
   });
-
   it('array', async () => {
     const obj = createReactiveState(['lujs', 18]);
     const { result, waitForNextUpdate } = renderTestHookASync(obj);
@@ -549,7 +564,6 @@ describe('use reactive async', () => {
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
   });
-
   it('array 2', async () => {
     const obj = createReactiveState(['lujs', { age: 18 }]);
     const { result, waitForNextUpdate } = renderTestHookASync(obj);
@@ -558,7 +572,6 @@ describe('use reactive async', () => {
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
   });
-
   it('array 3', async () => {
     const obj = createReactiveState(['lujs', { age: 18 }]);
     const { result, waitForNextUpdate } = renderTestHookASync(obj);
@@ -567,7 +580,6 @@ describe('use reactive async', () => {
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
   });
-
   it('async', async () => {
     const obj = createReactiveState({
       name: 'lujs',
@@ -584,8 +596,7 @@ describe('use reactive async', () => {
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
   });
-
-  it('Multiple reactive', async () => {
+  it('Multiple reactive', done => {
     const obj = createReactiveState({
       name: 'lujs',
       age: 18,
@@ -597,12 +608,15 @@ describe('use reactive async', () => {
     const h2 = renderTestHookASync(obj);
     const count1 = h1.result.current;
     const count2 = h2.result.current;
-    obj.timeToFire();
-    await h1.waitForNextUpdate();
-    expect(h1.result.current).toBe(count1 + 1);
-    expect(h2.result.current).toBe(count2 + 1);
+    act(() => {
+      obj.timeToFire();
+    });
+    setTimeout(() => {
+      expect(h1.result.current).toBe(count1 + 1);
+      expect(h2.result.current).toBe(count2 + 1);
+      done();
+    }, 16);
   });
-
   it('Multiple async reactive', async done => {
     const obj = createReactiveState({
       name: 'lujs',
@@ -622,25 +636,21 @@ describe('use reactive async', () => {
       done();
     }, 100);
   });
-
   it('deep object', async () => {
     const todoList = createReactiveState(new TodoList());
     const { result, waitForNextUpdate } = renderTestHookASync(todoList);
     const count = result.current;
     // add todo
-
     todoList.addTodo('test');
     todoList.list[0].finish();
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
   });
-
   it('Do not render when value same', async done => {
     const state = createReactiveState({
       name: 'lujs',
     });
     const { result } = renderTestHookASync(state);
-
     const count = result.current;
     state.name = 'lujs';
     setTimeout(() => {
@@ -648,7 +658,6 @@ describe('use reactive async', () => {
       done();
     }, 100);
   });
-
   it('selector', async done => {
     const state = createReactiveState({
       name: 'lujs',
@@ -665,14 +674,12 @@ describe('use reactive async', () => {
     state.name = 'yahahh';
     setTimeout(async () => {
       expect(result.current).toBe(count);
-
       state.obj.age = 19;
       await waitForNextUpdate();
       expect(result.current).toBe(count + 1);
       done();
     }, 100);
   });
-
   it('selector1', async done => {
     const state = createReactiveState({
       name: 'lujs',
@@ -689,7 +696,6 @@ describe('use reactive async', () => {
     state.name = 'lujs1';
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
-
     // Will not trigger rendering, so the following uses timing to assert
     state.obj.age = 19;
     setTimeout(() => {
@@ -697,7 +703,6 @@ describe('use reactive async', () => {
       done();
     }, 100);
   });
-
   it('selector2', async done => {
     const state = createReactiveState(new TodoList());
     const c1 = 'c1';
@@ -709,18 +714,15 @@ describe('use reactive async', () => {
       s => s.list[0],
     );
     const count = result.current;
-
     state.finishByContent(c1);
     await waitForNextUpdate();
     expect(result.current).toBe(count + 1);
-
     state.finishByContent(c2);
     setTimeout(() => {
       expect(result.current).toBe(count + 1);
       done();
     }, 100);
   });
-
   it('selector3', done => {
     const state = createReactiveState({
       a: {

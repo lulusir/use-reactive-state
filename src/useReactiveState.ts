@@ -14,23 +14,11 @@ const isObject = (val: any): val is Record<any, any> =>
 
 const isFunction = (val: any): val is Function => typeof val === 'function';
 
-const proxyMap = new WeakMap();
-const rawMap = new WeakMap();
-
 export function createReactiveState<T extends object>(obj: T) {
-  const oldProxyObj = proxyMap.get(obj);
-  if (oldProxyObj) {
-    return oldProxyObj;
-  }
-
-  if (rawMap.has(obj)) {
-    return obj;
-  }
-
   const subject = new Subject<T>();
 
   const convert = (target: any): any =>
-    isObject(target) ? reactive(target, whenValueSet) : target;
+    isObject(target) ? reactive(target, valueChange) : target;
 
   Object.assign(obj, {
     _subject: subject,
@@ -40,7 +28,7 @@ export function createReactiveState<T extends object>(obj: T) {
     },
   });
 
-  const whenValueSet = (
+  const valueChange = (
     target: any,
     key: string | symbol,
     value: any,
@@ -61,8 +49,8 @@ export function createReactiveState<T extends object>(obj: T) {
     callback: (
       target: T,
       key: string | symbol,
-      value: any,
-      receiver: any,
+      value?: any,
+      receiver?: any,
     ) => void,
   ) => {
     const proxy = new Proxy(o, {
@@ -80,11 +68,16 @@ export function createReactiveState<T extends object>(obj: T) {
         }
         return result;
       },
+      deleteProperty(target, key) {
+        const result = Reflect.deleteProperty(target, key);
+        callback(target, key);
+        return result;
+      },
     });
     return proxy;
   };
 
-  const proxy = reactive(obj, whenValueSet);
+  const proxy = reactive(obj, valueChange);
   return proxy as IObservable<T>;
 }
 
