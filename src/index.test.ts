@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { act, renderHook } from '@testing-library/react-hooks';
-import { createReactiveState, useReactiveState } from './useReactiveState';
+import { createReactiveState, useReactiveState } from './index';
 
 class Todo {
   content = '';
