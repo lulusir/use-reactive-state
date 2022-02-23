@@ -1,55 +1,56 @@
-import { Subject, Subscriber, Subscription } from 'rxjs';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import EventEmitter from 'eventemitter3';
+import { uniqueID } from './utils';
 
-type IObservable<T> = T & {
-  _subject: Subject<T>;
-  subscribe: (next?: (value: T) => void) => Subscription;
+const emitter = new EventEmitter();
+
+const setStateAction = (id: string) => `setStateAction:${id}`;
+
+type IObservable<T> = T & ISubject<T>;
+
+type ISubject<T> = {
+  _id: string;
+  _subscribe: (update: (value: T) => void) => { unsubscribe: () => void };
 };
 
-const isObject = (val: any): val is Record<any, any> =>
+const isObject = (val: any): val is object =>
   val !== null && typeof val === 'object';
 
-export function createReactiveState<T extends object>(obj: T) {
-  const subject = new Subject<T>();
+// const debug_creatTime = 0;
+// const debug_getTime = 0;
 
-  const valueChange = (
-    target: any,
-    key: string | symbol,
-    value: any,
-    receiver: any,
-  ) => {
-    const skip =
-      isObject(value) &&
-      Number.isInteger(Number(key)) &&
-      Reflect.getPrototypeOf(value) === Subscriber.prototype &&
-      Array.isArray(receiver);
-    if (!skip) {
-      subject.next(target);
-    }
+export function createReactiveState<T extends object>(obj: T) {
+  const weakMap = new WeakMap();
+  const subject: ISubject<T> = {
+    _id: uniqueID(),
+    _subscribe(update: (value: T) => void) {
+      emitter.on(setStateAction(this._id), update);
+      return {
+        unsubscribe: () => {
+          emitter.off(setStateAction(this._id), update);
+        },
+      };
+    },
+  };
+
+  Object.assign(obj, subject);
+
+  const valueChange = () => {
+    emitter.emit(setStateAction(subject._id), obj);
   };
 
   const convert = (target: any): any =>
-    isObject(target) ? reactive(target, valueChange) : target;
+    isObject(target) ? createProxy(target as T, valueChange) : target;
 
-  Object.assign(obj, {
-    _subject: subject,
-    subscribe: (next?: (value: T) => void) => {
-      const unsubscribe = subject.subscribe(next);
-      return unsubscribe;
-    },
-  });
+  const createProxy = (o: T, update: () => void) => {
+    if (weakMap.has(o)) {
+      return weakMap.get(o);
+    }
 
-  const reactive = (
-    o: T,
-    callback: (
-      target: T,
-      key: string | symbol,
-      value?: any,
-      receiver?: any,
-    ) => void,
-  ) => {
     const proxy = new Proxy(o, {
       get(target, key, receiver) {
         const result = Reflect.get(target, key, receiver);
+
         return convert(result);
       },
       set(target, key, value, receiver) {
@@ -58,19 +59,20 @@ export function createReactiveState<T extends object>(obj: T) {
         if (oldValue !== value) {
           result = Reflect.set(target, key, value, receiver);
 
-          callback(target, key, value, receiver);
+          update();
         }
         return result;
       },
       deleteProperty(target, key) {
         const result = Reflect.deleteProperty(target, key);
-        callback(target, key);
+        update();
         return result;
       },
     });
+    weakMap.set(o, proxy);
     return proxy;
   };
 
-  const proxy = reactive(obj, valueChange);
+  const proxy = createProxy(obj, valueChange);
   return proxy as IObservable<T>;
 }
