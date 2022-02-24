@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { useState, useEffect, useDebugValue, useRef } from 'react';
-import { Subject, Subscription } from 'rxjs';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
-
-type IObservable<T> = T & {
-  _subject: Subject<T>;
-  subscribe: (next?: (value: T) => void) => Subscription;
-};
+import { IObservable } from './reactive';
 
 const isFunction = (val: any): val is Function => typeof val === 'function';
 
@@ -56,7 +51,7 @@ export function useReactiveState<T extends object>(
       }
     };
 
-    const s = obj._subject.subscribe(x => {
+    const s = obj.subscribe(x => {
       if (!sync) {
         changed.current = true;
         if (!loopFlag.current) {
