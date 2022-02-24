@@ -6,11 +6,11 @@ const emitter = new EventEmitter();
 
 const setStateAction = (id: string) => `setStateAction:${id}`;
 
-type IObservable<T> = T & ISubject<T>;
+export type IObservable<T> = T & ISubject<T>;
 
 type ISubject<T> = {
   _id: string;
-  _subscribe: (update: (value: T) => void) => { unsubscribe: () => void };
+  subscribe: (update: (value: T) => void) => { unsubscribe: () => void };
 };
 
 const isObject = (val: any): val is object =>
@@ -23,7 +23,7 @@ export function createReactiveState<T extends object>(obj: T) {
   const weakMap = new WeakMap();
   const subject: ISubject<T> = {
     _id: uniqueID(),
-    _subscribe(update: (value: T) => void) {
+    subscribe(update: (value: T) => void) {
       emitter.on(setStateAction(this._id), update);
       return {
         unsubscribe: () => {

@@ -9,7 +9,7 @@ describe('reactive', () => {
       },
     });
 
-    vm._subscribe(obj => {
+    vm.subscribe(obj => {
       expect(obj.count).toBe(1);
       done();
     });
@@ -31,7 +31,7 @@ describe('reactive', () => {
     });
 
     let count = 0;
-    vm._subscribe(obj => {
+    vm.subscribe(obj => {
       count += 1;
     });
 
@@ -55,7 +55,7 @@ describe('reactive', () => {
       },
     });
 
-    vm._subscribe(obj => {
+    vm.subscribe(obj => {
       expect(obj.a.b.length).toBe(2);
       done();
     });
