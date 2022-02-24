@@ -19,4 +19,4 @@
 .umi-production
 .umi-test
 .env.local
-
+pnpm-lock.yaml
